@@ -264,7 +264,7 @@ class Tracker:
         for track in self.tracks:
             track.last_pos.append(track.pos.clone())
 
-        img = blob['img'].to(self.device)
+        img = blob['img'].to(self.device)  #.half() #Amit: added .half() to reduce memory usage
         orig_size = blob['orig_size'].to(self.device)
 
         target = None

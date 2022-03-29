@@ -1,4 +1,4 @@
-output_dir: null
+output_dir: ./outputs
 verbose: false
 seed: 666
 
@@ -9,8 +9,8 @@ interpolate: False
 load_results_dir: null
 
 # dataset (look into src/datasets/tracking/factory.py)
-dataset_name: MOT17-ALL-ALL
-data_root_dir: data
+dataset_name: MOT17-02-SDP #changed from MOT17-ALL-ALL
+data_root_dir: ../../../../data
 
 # [False, 'debug', 'pretty']
 # compile video with: `ffmpeg -f image2 -framerate 15 -i %06d.jpg -vcodec libx264 -y movie.mp4 -vf scale=320:-1`
@@ -22,6 +22,10 @@ generate_attention_maps: False
 frame_range:
     start: 0.0
     end: 1.0
+#resize from the original 1333/800 for memory efficiency
+# img_transform:
+  # max_size: 480
+  # val_width: 270
 
 tracker_cfg:
     # [False, 'center_distance', 'min_iou_0_5']

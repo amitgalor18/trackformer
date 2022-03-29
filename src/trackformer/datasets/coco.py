@@ -219,8 +219,9 @@ def make_coco_transforms(image_set, img_transform=None):
 
     if img_transform is not None:
         scale = img_transform.max_size / max_size
-        max_size = img_transform.max_size
-        val_width = img_transform.val_width
+        max_size =  img_transform.max_size #960
+        val_width =  img_transform.val_width #540
+        print('img_transform is not None! max size and val_width are: ',(max_size,val_width))
 
         # scale all with respect to custom max_size
         scales = [int(scale * s) for s in scales]

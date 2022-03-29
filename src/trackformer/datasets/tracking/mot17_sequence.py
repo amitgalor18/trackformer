@@ -15,7 +15,7 @@ from PIL import Image
 from torch.utils.data import Dataset
 
 from ..coco import make_coco_transforms
-from ..transforms import Compose
+from ..transforms import Compose, resize
 
 
 class MOT17Sequence(Dataset):
@@ -24,7 +24,7 @@ class MOT17Sequence(Dataset):
     This dataloader is designed so that it can handle only one sequence,
     if more have to be handled one should inherit from this class.
     """
-    data_folder = 'MOT17'
+    data_folder = 'MOT20' #'MOT17'
 
     def __init__(self, root_dir: str = 'data', seq_name: Optional[str] = None,
                  dets: str = '', vis_threshold: float = 0.0, img_transform: Namespace = None) -> None:
@@ -37,6 +37,8 @@ class MOT17Sequence(Dataset):
         super().__init__()
 
         self._seq_name = seq_name
+        print("seq_name in _init_ is:",seq_name)
+
         self._dets = dets
         self._vis_threshold = vis_threshold
 
@@ -44,15 +46,15 @@ class MOT17Sequence(Dataset):
 
         self._train_folders = os.listdir(os.path.join(self._data_dir, 'train'))
         self._test_folders = os.listdir(os.path.join(self._data_dir, 'test'))
-
         self.transforms = Compose(make_coco_transforms('val', img_transform))
 
         self.data = []
         self.no_gt = True
         if seq_name is not None:
             full_seq_name = seq_name
-            if self._dets is not None:
-                full_seq_name = f"{seq_name}-{dets}"
+            print("full_seq_name in _init_ is:",full_seq_name)
+            # if self._dets is not None:
+                # full_seq_name = f"{seq_name}-{dets}"
             assert full_seq_name in self._train_folders or full_seq_name in self._test_folders, \
                 'Image set does not exist: {}'.format(full_seq_name)
 
@@ -67,9 +69,14 @@ class MOT17Sequence(Dataset):
         data = self.data[idx]
         img = Image.open(data['im_path']).convert("RGB")
         width_orig, height_orig = img.size
-
+        # print('original size: ',[width_orig, height_orig])
+        # img = img.resize((960,540))
+        # img, _ = resize(img,None,[960,540]) #Amit: resized images for lack of memory
+        # print('after resize: ',img.size)
         img, _ = self.transforms(img)
+        # print('type: ',img.type)
         width, height = img.size(2), img.size(1)
+        # print('new size: ',[width, height])
 
         sample = {}
         sample['img'] = img
@@ -153,8 +160,9 @@ class MOT17Sequence(Dataset):
     def get_seq_path(self) -> str:
         """ Return directory path of sequence. """
         full_seq_name = self._seq_name
-        if self._dets is not None:
-            full_seq_name = f"{self._seq_name}-{self._dets}"
+        print("full_seq_name in get_seq_path() is:",full_seq_name)
+        # if self._dets is not None:
+            # full_seq_name = f"{self._seq_name}-{self._dets}"
 
         if full_seq_name in self._train_folders:
             return osp.join(self._data_dir, 'train', full_seq_name)

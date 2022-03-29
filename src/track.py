@@ -92,6 +92,8 @@ def main(seed, dataset_name, obj_detect_checkpoint_file, tracker_cfg,
         obj_detector_post = obj_detector_model['post']
         img_transform = obj_detector_model['img_transform']
 
+    # obj_detector.half() #Amit: added this line to reduce memory usage
+
     if hasattr(obj_detector, 'tracking'):
         obj_detector.tracking()
 

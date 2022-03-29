@@ -81,3 +81,32 @@ class MOTS20Wrapper(MOT17Wrapper):
         self._data = []
         for seq in sequences:
             self._data.append(MOTS20Sequence(seq_name=seq, **kwargs))
+
+class MOT20Wrapper(MOT17Wrapper):
+    """A Wrapper for the MOT_Sequence class to return multiple sequences."""
+
+    def __init__(self, split: str, **kwargs) -> None:
+        """Initliazes all subset of the dataset.
+
+        Keyword arguments:
+        split -- the split of the dataset to use
+        kwargs -- kwargs for the MOTS20Sequence dataset
+        """
+        train_sequences = ['MOT20-01', 'MOT20-02', 'MOT20-03', 'MOT20-05']
+        test_sequences = ['MOT20-04', 'MOT20-06', 'MOT20-07', 'MOT20-08']
+
+        if split == "TRAIN":
+            sequences = train_sequences
+        elif split == "TEST":
+            sequences = test_sequences
+        elif split == "ALL":
+            sequences = train_sequences + test_sequences
+            sequences = sorted(sequences)
+        elif f"MOT20-{split}" in train_sequences + test_sequences:
+            sequences = [f"MOT20-{split}"]
+        else:
+            raise NotImplementedError("MOT20 split not available.")
+
+        self._data = []
+        for seq in sequences:
+            self._data.append(MOT17Sequence(seq_name=seq, **kwargs))
